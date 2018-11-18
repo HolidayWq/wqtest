@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>BI</title>
+	<meta charset="UTF-8">
+	<title>BI</title>
+
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		{
+			float: left;
+			width: 250px;
+			height: 50px;
+			border: 1px solid #F00
+		}
+
+		ul,
+		li {
+			list-style: none;
+		}
+
+		.box {
+			width: 600px;
+			margin: 20px auto;
+			float: left;
+		}
+
+		.hide {
+			display: none;
+		}
+
+		#head {
+			height: 30px;
+			border-bottom: 1px solid blue;
+		}
+
+		#head li {
+			float: left;
+			width: 100px;
+			height: 24px;
+			line-height: 24px;
+			margin: 0 4px;
+			text-align: center;
+			border: 1px solid blue;
+			border-bottom: none;
+			background-color: #f5f5f5;
+			cursor: pointer;
+		}
+
+		#box2 {
+			border: 1px;
+			margin: 20px;
+			border-top: none;
+			padding: 20px;
+			float: left
+		}
+
+		#head .working {
+			position: relative;
+			height: 25px;
+			margin-bottom: -1px;
+			background-color: #fff;
+		}
+	</style>
+
+	<!--<script src="jeDate-gh-pages/dist/jedate.min.js"></script>
+	<link type="text/css" rel="stylesheet" href="jeDate-gh-pages/skin/jedate.css">-->
+
+	<script type="text/javascript">
+        window.onload = function() {
+            var hNode = document.getElementsByTagName("li");
+            var info = document.getElementById("box2").getElementsByTagName("div");
+            for(var i = 0; i < hNode.length; i++) {
+                hNode[i].index = i;
+                hNode[i].onmousemove = function() {
+                    for(var j = 0; j < hNode.length; j++) {
+                        hNode[j].className = "";
+                        info[j].className = "hide"
+                    }
+                    hNode[this.index].className = "working";
+                    info[this.index].className = "";
+                }
+            }
+        }
+	</script>
+	<!--搜索-->
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<link href="" rel="stylesheet">
+	<style type="text/css">
+		#search {
+			width: 80px;
+			height: 32px;
+			/*float: right;*/
+			background: deepskyblue;
+			color: white;
+			text-align: center;
+			line-height: 32px;
+			cursor: pointer;
+		}
+	</style>
+
+	<link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+	<link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+	<link rel="stylesheet" href="../css/style.css">
+ 	<script src="../js/jedate.min.js"></script>
+	<!--<link rel="stylesheet" href="../plugins/bootstrap/css/jeDate-test.css">-->
+	<link rel="stylesheet" href="../plugins/bootstrap/css/jedate.css">
+	<link href="../plugins/bootstrap/fonts/glyphicons-halflings-regular.woff">
+	<!--<script src="../js/index.js"></script>
+	<script src="../js/vuejs-2.5.16.js"></script>
+	<link rel="stylesheet" href="../plugins/bootstrap/css/index.css"> -->
+	<script src="../plugins/angularjs/angular.min.js"></script>
+	<!--<script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>-->
+	<script type="text/javascript" src="../plugins/angularjs/angular.min.js"></script>
+	<!--分页插件-->
+	<link rel="stylesheet" href="../plugins/angularjs/pagination.css">
+	<script src="../plugins/angularjs/pagination.js"></script>
+
+	<script type="text/javascript" src="../js/base_pagination.js"></script>
+	<!--<script type="text/javascript" src="../js/base.js"></script>-->
+	<script type="text/javascript" src="../js/service/showService.js"></script>
+	<script type="text/javascript" src="../js/controller/baseController.js"></script>
+	<script type="text/javascript" src="../js/controller/showController.js"></script>
+
+
+
+
+</head>
+
+<body ng-app="bi" ng-controller="showController" ng-init="findAll()" class="hold-transition skin-red sidebar-mini" >
+<h3 class="m-b-none">全服增量留存率</h3>
+<br />
+
+<!--下拉选择  默认25-->
+<div class="col-md-12 column">
+	显示
+	<select>
+		<option value="10">10</option>
+		<option value="25" selected="selected">25</option>
+		<option value="50">50</option>
+		<option value="100">100</option>
+	</select>项结果
+</div>
+</div>
+</div>
+
+<div class="box">
+
+	<ul id="head">
+		<li class="working">新增账户留存</li>
+		<li>激活设备留存</li>
+
+	</ul>
+	<br />
+	<!--时间-->
+	<span >日期：</span><input type="text"  id="inpstart"  ng-model="searchTime.startTime">
+	<span > - </span><input type="text" id="inpend" ng-model="searchTime.endTime" >
+	<script type="text/javascript">
+        var start = {},
+            end = {};
+        jeDate('#inpstart', {
+            format: 'YYYY-MM-DD ',
+            minDate: '2014-06-16 ', //设定最小日期为当前日期
+            maxDate: function(that) {
+                //that 指向实例对象
+                return jeDate.valText(that.valCell) == "" ? jeDate.nowDate({
+                    DD: 0
+                }) : start.maxDate;
+            }, //设定最大日期为当前日期
+            donefun: function(obj) {
+                end.minDate = obj.val; //开始日选好后，重置结束日的最小日期
+                jeDate("#inpend", LinkageEndDate(false));
+            }
+        });
+        jeDate('#inpend', LinkageEndDate);
+
+        function LinkageEndDate(istg) {
+            return {
+                trigger: istg || "click",
+                format: 'YYYY-MM-DD ',
+                minDate: function(that) {
+                    //that 指向实例对象
+                    var nowMinDate = jeDate.valText('#inpstart') == "" && jeDate.valText(that.valCell) == "";
+                    return nowMinDate ? jeDate.nowDate({
+                        DD: 0
+                    }) : end.minDate;
+                }, //设定最小日期为当前日期
+                maxDate: '2099-06-16 ', //设定最大日期为当前日期
+                donefun: function(obj) {
+                    start.maxDate = obj.val; //将结束日的初始值设定为开始日的最大日期
+                }
+            };
+        }
+	</script>
+	<select>
+		<option value="大区1益玩" selected="selected">大区1益玩</option>
+		<option value="大区2硬核">大区2硬核</option>
+	</select>
+	<button class="btn btn-default" ng-click="search()" type="button" value="搜索">搜索</button>
+	<br />
+	<br />
+	<div id="box2" >
+		<div>
+			<!--数据列表-->
+			<table id="dataList" class="table table-bordered table-striped table-hover dataTable" style="background: white">
+				<thead>
+				<tr>
+					<th class="sorting_desc">日期</th>
+					<th class="sorting">注册数</th>
+					<th class="sorting">首次创角数</th>
+					<th class="sorting">2日</th>
+					<th class="sorting">3日</th>
+					<th class="sorting">4日</th>
+					<th class="sorting">5日</th>
+					<th class="sorting">6日</th>
+					<th class="sorting">7日</th>
+					<th class="sorting">14日</th>
+					<th class="sorting">21日</th>
+					<th class="sorting">30日</th>
+					<th class="sorting">60日</th>
+					<th class="sorting">90日</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="entity in list">
+			        <td>{{entity.log_ymd|date:"yyyy-MM-dd"}}</td>
+					<td>{{entity.register}}</td>
+					<td>{{entity.frist_role}}</td>
+					<td>{{entity.day_2}}</td>
+					<td>{{entity.day_3}}</td>
+					<td>{{entity.day_4}}</td>
+					<td>{{entity.day_5}}</td>
+					<td>{{entity.day_6}}</td>
+					<td>{{entity.day_7}}</td>
+					<td>{{entity.day_14}}</td>
+					<td>{{entity.day_21}}</td>
+					<td>{{entity.day_30}}</td>
+					<td>{{entity.day_60}}</td>
+					<td>{{entity.day_90}}</td>
+				</tr>
+
+				</tbody>
+			</table>
+			<!-- 分页 -->
+			<tm-pagination conf="paginationConf"></tm-pagination>
+			<br>
+		</div>
+		<div class="hide">
+			暂时为空<br>
+		</div>
+	</div>
+</div>
+
+</div>
+<!-- 数据表格 /-->
+<!-- 分页 -->
+<tm-pagination conf="paginationConf"></tm-pagination>
+</div>
+</body>
+</html>
